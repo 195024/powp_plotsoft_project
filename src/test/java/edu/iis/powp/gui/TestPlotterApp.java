@@ -17,6 +17,7 @@ import edu.iis.powp.events.SelectRunCurrentCommandOptionListener;
 import edu.iis.powp.events.SelectTestFigure2OptionListener;
 import edu.iis.powp.events.predefine.SelectTestFigureOptionListener;
 import edu.iis.powp.shapes.gui.SelectShapeWindow;
+import edu.iis.powp.transformations.gui.SelectTransformationWindow;
 import edu.kis.powp.drawer.panel.DrawPanelController;
 import edu.kis.powp.drawer.shape.LineFactory;
 
@@ -81,7 +82,9 @@ public class TestPlotterApp {
 
 		SelectShapeWindow selectShapeWindow = new SelectShapeWindow();
 		application.addWindowComponent("Select shape", selectShapeWindow);
-
+		
+		SelectTransformationWindow selectTransformationWindow = new SelectTransformationWindow();
+		application.addWindowComponent("Select transformation", selectTransformationWindow);
 	}
 
 	/**
