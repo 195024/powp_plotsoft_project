@@ -19,6 +19,7 @@ import javax.swing.JTextField;
 import edu.iis.powp.app.gui.PlotterGUI;
 import edu.iis.powp.command.DrawShapeCommand;
 import edu.iis.powp.shapes.Circle;
+import edu.iis.powp.shapes.Cross;
 import edu.iis.powp.shapes.CurrentShapeChosen;
 import edu.iis.powp.shapes.Point;
 import edu.iis.powp.shapes.Rectangle;
@@ -38,6 +39,7 @@ public class SelectShapeWindow extends JFrame implements WindowComponent {
 	private Circle circle;
 	private Triangle triangle;
 	private Star star;
+	private Cross cross;
 	private DrawShapeCommand drawShapeCommand;
 
 	/**
@@ -85,11 +87,13 @@ public class SelectShapeWindow extends JFrame implements WindowComponent {
 		JPanel circleCard = createCircleCard();
 		JPanel triangleCard = createTriangleCard();
 		JPanel starCard = createStarCard();
+		JPanel crossCard = createCrossCard();
 
 		cardPane.add(rectangleCard, "Rectangle");
 		cardPane.add(circleCard, "Circle");
 		cardPane.add(triangleCard, "Triangle");
 		cardPane.add(starCard, "Star");
+		cardPane.add(crossCard, "Cross");
 
 		// BOTTOM
 		JButton okButton = new JButton("Apply");
@@ -115,6 +119,9 @@ public class SelectShapeWindow extends JFrame implements WindowComponent {
 					case "Star":
 						parseStarData(starCard, startingPoint);
 						break;
+					case "Cross":
+						parseCrossData(crossCard, startingPoint);
+						break;
 					}
 				} catch (NumberFormatException ex) {
 					PlotterGUI.showCaughtExceptionInfo("Podaj prawid�owe warto�ci numeryczne!");
@@ -129,6 +136,30 @@ public class SelectShapeWindow extends JFrame implements WindowComponent {
 		pane.add(okButton, BorderLayout.PAGE_END);
 
 		this.pack();
+	}
+
+	/**
+	 * Przetwarza dane wej�ciowe przekazuj�c je do obiektu Singleton dla
+	 * kszta�tu Cross i tworzy obiekt DrawShapeCommand dla tego kszta�tu.
+	 * 
+	 * @param crossCard
+	 *            Panel z inputami dla kszta�tu Cross.
+	 * @param startingPoint
+	 *            Punkt startowy rysowania figury.
+	 * @throws NumberFormatException
+	 */
+	private void parseCrossData(JPanel crossCard, Point startingPoint) throws NumberFormatException {
+		JTextField crossWidth = (JTextField) crossCard.getComponent(1);
+		JTextField crossThick = (JTextField) crossCard.getComponent(3);
+
+		int width = Integer.parseInt(crossWidth.getText());
+		int thick = Integer.parseInt(crossThick.getText());
+
+		cross = Cross.getInstance();
+		cross.clearPoints();
+		cross.setStartingPoint(startingPoint);
+		cross.setDimensions(width, thick);
+		drawShapeCommand = new DrawShapeCommand(cross);
 	}
 
 	/**
@@ -235,6 +266,26 @@ public class SelectShapeWindow extends JFrame implements WindowComponent {
 		triangle.setStartingPoint(startingPoint);
 		triangle.setDimensions(secondPoint, thirdPoint);
 		drawShapeCommand = new DrawShapeCommand(triangle);
+	}
+
+	/**
+	 * Tworzy JPanel dla kszta�tu Cross.
+	 * 
+	 * @return
+	 */
+	private JPanel createCrossCard() {
+		JPanel cross = new JPanel();
+
+		JTextField crossWidth = new JTextField("200", 5);
+		JTextField crossThick = new JTextField("25", 5);
+
+		cross.add(new JLabel("Width:"));
+		cross.add(crossWidth);
+
+		cross.add(new JLabel("Arm thickness:"));
+		cross.add(crossThick);
+
+		return cross;
 	}
 
 	/**
