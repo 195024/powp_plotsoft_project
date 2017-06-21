@@ -22,6 +22,7 @@ import edu.iis.powp.shapes.Circle;
 import edu.iis.powp.shapes.CurrentShapeChosen;
 import edu.iis.powp.shapes.Point;
 import edu.iis.powp.shapes.Rectangle;
+import edu.iis.powp.shapes.Star;
 import edu.iis.powp.shapes.Triangle;
 import edu.iis.powp.window.WindowComponent;
 
@@ -36,6 +37,7 @@ public class SelectShapeWindow extends JFrame implements WindowComponent {
 	private Rectangle rectangle;
 	private Circle circle;
 	private Triangle triangle;
+	private Star star;
 	private DrawShapeCommand drawShapeCommand;
 
 	/**
@@ -58,7 +60,7 @@ public class SelectShapeWindow extends JFrame implements WindowComponent {
 		JPanel topPane = new JPanel();
 
 		// Combo box
-		String comboBoxItems[] = { "Rectangle", "Circle", "Triangle" };
+		String comboBoxItems[] = { "Rectangle", "Circle", "Triangle", "Star" };
 		JComboBox<String> cb = new JComboBox<String>(comboBoxItems);
 		cb.setEditable(false);
 		cb.addItemListener(new ItemListener() {
@@ -82,10 +84,12 @@ public class SelectShapeWindow extends JFrame implements WindowComponent {
 		JPanel rectangleCard = createRectangleCard();
 		JPanel circleCard = createCircleCard();
 		JPanel triangleCard = createTriangleCard();
+		JPanel starCard = createStarCard();
 
 		cardPane.add(rectangleCard, "Rectangle");
 		cardPane.add(circleCard, "Circle");
 		cardPane.add(triangleCard, "Triangle");
+		cardPane.add(starCard, "Star");
 
 		// BOTTOM
 		JButton okButton = new JButton("Apply");
@@ -108,6 +112,9 @@ public class SelectShapeWindow extends JFrame implements WindowComponent {
 					case "Triangle":
 						parseTriangleData(triangleCard, startingPoint);
 						break;
+					case "Star":
+						parseStarData(starCard, startingPoint);
+						break;
 					}
 				} catch (NumberFormatException ex) {
 					PlotterGUI.showCaughtExceptionInfo("Podaj prawid�owe warto�ci numeryczne!");
@@ -122,6 +129,32 @@ public class SelectShapeWindow extends JFrame implements WindowComponent {
 		pane.add(okButton, BorderLayout.PAGE_END);
 
 		this.pack();
+	}
+
+	/**
+	 * Przetwarza dane wej�ciowe przekazuj�c je do obiektu Singleton dla
+	 * kszta�tu Star i tworzy obiekt DrawShapeCommand dla tego kszta�tu.
+	 * 
+	 * @param crossCard
+	 *            Panel z inputami dla kszta�tu Star.
+	 * @param startingPoint
+	 *            Punkt startowy rysowania figury.
+	 * @throws NumberFormatException
+	 */
+	private void parseStarData(JPanel starCard, Point startingPoint) throws NumberFormatException {
+		JTextField starRadiusIn = (JTextField) (JTextField) starCard.getComponent(1);
+		JTextField starRadiusOut = (JTextField) (JTextField) starCard.getComponent(3);
+
+		int radIn = Integer.parseInt(starRadiusIn.getText());
+		int radOut = Integer.parseInt(starRadiusOut.getText());
+
+		star = Star.getInstance();
+		star.clearPoints();
+		Point tempStPoint = new Point(startingPoint);
+		tempStPoint.moveY(-radOut);
+		star.setStartingPoint(tempStPoint);
+		star.setDimensions(radIn, radOut);
+		drawShapeCommand = new DrawShapeCommand(star);
 	}
 
 	/**
@@ -202,6 +235,26 @@ public class SelectShapeWindow extends JFrame implements WindowComponent {
 		triangle.setStartingPoint(startingPoint);
 		triangle.setDimensions(secondPoint, thirdPoint);
 		drawShapeCommand = new DrawShapeCommand(triangle);
+	}
+
+	/**
+	 * Tworzy JPanel dla kszta�tu Star.
+	 * 
+	 * @return
+	 */
+	private JPanel createStarCard() {
+		JPanel star = new JPanel();
+
+		JTextField starRadiusIn = new JTextField("50", 5);
+		JTextField starRadiusOut = new JTextField("100", 5);
+
+		star.add(new JLabel("Radius inner:"));
+		star.add(starRadiusIn);
+
+		star.add(new JLabel("Radius outer:"));
+		star.add(starRadiusOut);
+
+		return star;
 	}
 
 	/**
