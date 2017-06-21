@@ -1,0 +1,6 @@
+edu.iis.powp.app.gui
+edu.iis.powp.command
+edu.iis.powp.shapes
+edu.iis.powp.shapes.gui
+edu.iis.powp.transformations
+edu.iis.powp.transformations.gui
