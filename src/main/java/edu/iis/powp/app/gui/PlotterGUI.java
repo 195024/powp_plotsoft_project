@@ -281,4 +281,12 @@ public class PlotterGUI extends JFrame {
 	public void flushLoggerTextArea() {
 		this.loggerTextArea.setText("");
 	}
+	
+	/**
+	 * Metoda wy�wietla wiadomo�� przechwyconego wyj�tku w oknie programu.
+	 * @param msg Wiadomo�� do wy�wietlenia w przypadku przechwycenia wyj�tku.
+	 */
+	public static void showCaughtExceptionInfo(String msg) {
+		LOGGER.warning(msg);
+	}
 }
