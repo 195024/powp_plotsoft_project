@@ -62,7 +62,7 @@ public class SelectShapeWindow extends JFrame implements WindowComponent {
 		JPanel topPane = new JPanel();
 
 		// Combo box
-		String comboBoxItems[] = { "Rectangle", "Circle", "Triangle", "Star" };
+		String comboBoxItems[] = { "Rectangle", "Circle", "Triangle", "Star", "Cross" };
 		JComboBox<String> cb = new JComboBox<String>(comboBoxItems);
 		cb.setEditable(false);
 		cb.addItemListener(new ItemListener() {
