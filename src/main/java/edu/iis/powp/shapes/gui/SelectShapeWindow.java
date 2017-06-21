@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -21,6 +22,7 @@ import edu.iis.powp.shapes.Circle;
 import edu.iis.powp.shapes.CurrentShapeChosen;
 import edu.iis.powp.shapes.Point;
 import edu.iis.powp.shapes.Rectangle;
+import edu.iis.powp.shapes.Triangle;
 import edu.iis.powp.window.WindowComponent;
 
 /**
@@ -33,6 +35,7 @@ public class SelectShapeWindow extends JFrame implements WindowComponent {
 
 	private Rectangle rectangle;
 	private Circle circle;
+	private Triangle triangle;
 	private DrawShapeCommand drawShapeCommand;
 
 	/**
@@ -55,7 +58,7 @@ public class SelectShapeWindow extends JFrame implements WindowComponent {
 		JPanel topPane = new JPanel();
 
 		// Combo box
-		String comboBoxItems[] = { "Rectangle", "Circle" };
+		String comboBoxItems[] = { "Rectangle", "Circle", "Triangle" };
 		JComboBox<String> cb = new JComboBox<String>(comboBoxItems);
 		cb.setEditable(false);
 		cb.addItemListener(new ItemListener() {
@@ -78,9 +81,11 @@ public class SelectShapeWindow extends JFrame implements WindowComponent {
 
 		JPanel rectangleCard = createRectangleCard();
 		JPanel circleCard = createCircleCard();
+		JPanel triangleCard = createTriangleCard();
 
 		cardPane.add(rectangleCard, "Rectangle");
 		cardPane.add(circleCard, "Circle");
+		cardPane.add(triangleCard, "Triangle");
 
 		// BOTTOM
 		JButton okButton = new JButton("Apply");
@@ -99,6 +104,9 @@ public class SelectShapeWindow extends JFrame implements WindowComponent {
 						break;
 					case "Circle":
 						parseCircleData(circleCard, startingPoint);
+						break;
+					case "Triangle":
+						parseTriangleData(triangleCard, startingPoint);
 						break;
 					}
 				} catch (NumberFormatException ex) {
@@ -166,6 +174,37 @@ public class SelectShapeWindow extends JFrame implements WindowComponent {
 	}
 
 	/**
+	 * Przetwarza dane wej�ciowe przekazuj�c je do obiektu Singleton dla
+	 * kszta�tu Triangle i tworzy obiekt DrawShapeCommand dla tego kszta�tu.
+	 * 
+	 * @param crossCard
+	 *            Panel z inputami dla kszta�tu Triangle.
+	 * @param startingPoint
+	 *            Punkt startowy rysowania figury.
+	 * @throws NumberFormatException
+	 */
+	private void parseTriangleData(JPanel triangleCard, Point startingPoint) throws NumberFormatException {
+		JTextField triSecondX = (JTextField) ((Container) triangleCard.getComponent(0)).getComponent(1);
+		JTextField triSecondY = (JTextField) ((Container) triangleCard.getComponent(0)).getComponent(2);
+		JTextField triThirdX = (JTextField) ((Container) triangleCard.getComponent(1)).getComponent(1);
+		JTextField triThirdY = (JTextField) ((Container) triangleCard.getComponent(1)).getComponent(2);
+
+		int secondPointX = Integer.parseInt(triSecondX.getText());
+		int secondPointY = Integer.parseInt(triSecondY.getText());
+		int thirdPointX = Integer.parseInt(triThirdX.getText());
+		int thirdPointY = Integer.parseInt(triThirdY.getText());
+
+		Point secondPoint = new Point(secondPointX, secondPointY);
+		Point thirdPoint = new Point(thirdPointX, thirdPointY);
+
+		triangle = Triangle.getInstance();
+		triangle.clearPoints();
+		triangle.setStartingPoint(startingPoint);
+		triangle.setDimensions(secondPoint, thirdPoint);
+		drawShapeCommand = new DrawShapeCommand(triangle);
+	}
+
+	/**
 	 * Tworzy JPanel dla kszta�tu Rectangle.
 	 * 
 	 * @return
@@ -198,6 +237,37 @@ public class SelectShapeWindow extends JFrame implements WindowComponent {
 		circle.add(circleRadius);
 
 		return circle;
+	}
+
+	/**
+	 * Tworzy JPanel dla kszta�tu Triangle.
+	 * 
+	 * @return
+	 */
+	private JPanel createTriangleCard() {
+		JPanel triangle = new JPanel();
+		triangle.setLayout(new BoxLayout(triangle, BoxLayout.Y_AXIS));
+
+		JPanel secondPointPane = new JPanel();
+		JPanel thirdPointPane = new JPanel();
+
+		JTextField triSecondX = new JTextField("75", 5);
+		JTextField triSecondY = new JTextField("-100", 5);
+		JTextField triThirdX = new JTextField("200", 5);
+		JTextField triThirdY = new JTextField("0", 5);
+
+		secondPointPane.add(new JLabel("Second point:"));
+		secondPointPane.add(triSecondX);
+		secondPointPane.add(triSecondY);
+
+		thirdPointPane.add(new JLabel("Third point:"));
+		thirdPointPane.add(triThirdX);
+		thirdPointPane.add(triThirdY);
+
+		triangle.add(secondPointPane);
+		triangle.add(thirdPointPane);
+
+		return triangle;
 	}
 
 	/**
